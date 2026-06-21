@@ -1,0 +1,13 @@
+{
+  "name": "neighborly",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hyperlocal community marketplace — npm workspaces monorepo",
+  "workspaces": ["shared", "server", "client"],
+  "scripts": {
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "build": "npm run build -w server && npm run build -w client",
+    "typecheck": "npm run typecheck -w server && npm run typecheck -w client"
+  }
+}

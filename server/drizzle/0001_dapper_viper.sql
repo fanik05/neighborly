@@ -1,0 +1,1 @@
+ALTER TABLE "items" ADD COLUMN "address" text DEFAULT '' NOT NULL;
