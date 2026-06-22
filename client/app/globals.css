@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'leaflet/dist/leaflet.css';
 
 /* Tailwind v4 CSS-first theme — the "lending-shed" token system.
    These generate utilities like bg-paper, text-pine, rounded-tag, shadow-card. */

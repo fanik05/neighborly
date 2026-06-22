@@ -51,7 +51,7 @@ Start the **server before the client**. Both must run for chat and geolocation t
 
 ## Build phases
 - **Phase 1** — auth + item listings + Cloudinary image uploads ✅ scaffolded here.
-- **Phase 2** — geolocation / "items near me" + Leaflet map.
+- **Phase 2** — geolocation / "items near me" + Leaflet map ✅
 - **Phase 3** — Socket.io chat + loan request workflow.
 
 See `CLAUDE.md` for standing engineering conventions.
