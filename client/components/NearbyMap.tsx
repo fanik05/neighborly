@@ -18,7 +18,7 @@ export default function NearbyMap({
   const center = coords ? ([coords[1], coords[0]] as [number, number]) : DEFAULT_CENTER;
 
   return (
-    <div tabIndex={0} aria-label="Nearby listings map">
+    <div aria-label="Nearby listings map">
       <MapContainer center={center} zoom={coords ? 12 : 10} scrollWheelZoom className="h-80 w-full rounded-tag">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -42,7 +42,7 @@ export default function NearbyMap({
               <div className="space-y-1">
                 <p className="font-semibold">{item.title}</p>
                 <Link className="text-sm text-pine underline" href={`/items/${item.id}`}>
-                  View {item.title}
+                  View details
                 </Link>
               </div>
             </Popup>

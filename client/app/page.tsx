@@ -97,7 +97,7 @@ export default function HomePage() {
         <div className="flex items-center gap-2">
           {coords && (
             <select
-              className="field !w-auto !py-1.5 !text-xs"
+              className="w-auto rounded-tag border border-line bg-white px-3 py-1.5 text-xs outline-none focus:border-pine focus:ring-2 focus:ring-pine/15"
               aria-label="Nearby radius"
               value={radius}
               onChange={(e) => setRadius(Number(e.target.value))}
