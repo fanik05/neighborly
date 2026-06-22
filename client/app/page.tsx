@@ -98,6 +98,7 @@ export default function HomePage() {
           {coords && (
             <select
               className="field !w-auto !py-1.5 !text-xs"
+              aria-label="Nearby radius"
               value={radius}
               onChange={(e) => setRadius(Number(e.target.value))}
             >
