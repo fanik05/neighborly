@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { api, qs } from '@/lib/api';
 import { getBrowserLocation, distanceMiles, formatDistance } from '@/lib/geo';
 import type { Item, ListingType } from '@/lib/types';
 import ItemCard from '@/components/ItemCard';
+
+const NearbyMap = dynamic(() => import('@/components/NearbyMap'), { ssr: false });
 
 const FILTERS: { key: ListingType | 'all'; label: string }[] = [
   { key: 'all', label: 'Everything' },
@@ -13,12 +16,20 @@ const FILTERS: { key: ListingType | 'all'; label: string }[] = [
   { key: 'sale', label: 'For sale' },
   { key: 'free', label: 'Free' },
 ];
+const RADII = [
+  { meters: 1609, label: '1 mi' },
+  { meters: 8047, label: '5 mi' },
+  { meters: 16093, label: '10 mi' },
+  { meters: 40233, label: '25 mi' },
+  { meters: 80467, label: '50 mi' },
+];
 
 export default function HomePage() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<ListingType | 'all'>('all');
   const [coords, setCoords] = useState<[number, number] | null>(null);
+  const [radius, setRadius] = useState(16093);
 
   // Try to capture the visitor's location once so we can show distances.
   useEffect(() => {
@@ -33,13 +44,13 @@ export default function HomePage() {
       type: filter === 'all' ? undefined : filter,
       lng: coords?.[0],
       lat: coords?.[1],
-      radius: coords ? 50000 : undefined, // 50km while seeding; tighten in Phase 2 UI
+      radius: coords ? radius : undefined,
     });
     api<Item[]>(`/items${query}`)
       .then(setItems)
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
-  }, [filter, coords]);
+  }, [filter, coords, radius]);
 
   return (
     <div>
@@ -81,8 +92,29 @@ export default function HomePage() {
             </button>
           ))}
         </div>
-        <span className="text-xs text-muted">{items.length} listings</span>
+        <div className="flex items-center gap-2">
+          {coords && (
+            <select
+              className="field !w-auto !py-1.5 !text-xs"
+              value={radius}
+              onChange={(e) => setRadius(Number(e.target.value))}
+            >
+              {RADII.map((r) => (
+                <option key={r.meters} value={r.meters}>
+                  Within {r.label}
+                </option>
+              ))}
+            </select>
+          )}
+          <span className="text-xs text-muted">{items.length} listings</span>
+        </div>
       </div>
+
+      {!loading && items.length > 0 && (
+        <section className="mb-5 overflow-hidden rounded-tag border border-line bg-white p-2">
+          <NearbyMap items={items} coords={coords} />
+        </section>
+      )}
 
       {loading ? (
         <p className="py-16 text-center text-muted">Finding what’s nearby…</p>
