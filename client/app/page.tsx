@@ -23,13 +23,14 @@ const RADII = [
   { meters: 40233, label: '25 mi' },
   { meters: 80467, label: '50 mi' },
 ];
+const DEFAULT_RADIUS_METERS = 16093;
 
 export default function HomePage() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<ListingType | 'all'>('all');
   const [coords, setCoords] = useState<[number, number] | null>(null);
-  const [radius, setRadius] = useState(16093);
+  const [radius, setRadius] = useState(DEFAULT_RADIUS_METERS);
 
   // Try to capture the visitor's location once so we can show distances.
   useEffect(() => {

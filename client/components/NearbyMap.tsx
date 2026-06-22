@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
 import type { Item } from '@/lib/types';
 
+// Fallback map center (New York City) when browser geolocation is unavailable.
 const DEFAULT_CENTER: [number, number] = [40.7128, -74.006];
 
 export default function NearbyMap({
@@ -13,6 +14,7 @@ export default function NearbyMap({
   items: Item[];
   coords: [number, number] | null;
 }) {
+  // Leaflet uses [lat, lng], while our API and DB use GeoJSON [lng, lat].
   const center = coords ? ([coords[1], coords[0]] as [number, number]) : DEFAULT_CENTER;
 
   return (
