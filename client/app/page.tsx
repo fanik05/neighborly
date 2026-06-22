@@ -23,6 +23,7 @@ const RADII = [
   { meters: 40233, label: '25 mi' },
   { meters: 80467, label: '50 mi' },
 ];
+// Default to a 10-mile feed so results stay local without feeling empty.
 const DEFAULT_RADIUS_METERS = 16093;
 
 export default function HomePage() {
