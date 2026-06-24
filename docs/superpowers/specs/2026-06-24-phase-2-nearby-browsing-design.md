@@ -25,13 +25,16 @@ login/register, DB schema, mappers, shared `ItemDTO`.
 **Phase 2 — the discovery layer, rebuilt fresh:**
 - **Server:** the geo-aware `GET /api/items` query — filter by `lng/lat/radius/category/type/q`,
   order nearest-first via PostGIS `ST_DWithin` + `<->`.
-- **Client:** the home feed (`app/page.tsx`), the Leaflet map (`NearbyMap.tsx`), and the
-  browse-distance helpers (`distanceMiles`, `formatDistance`) + the distance label on `ItemCard`.
+- **Client:** the home feed (`app/page.tsx`), the Leaflet map (`NearbyMap.tsx`), the **entire**
+  `lib/geo.ts` module (`getBrowserLocation`, `reverseGeocode`, `distanceMiles`, `formatDistance`),
+  and the distance label on `ItemCard`.
 
-**Shared geo infrastructure — stays (NOT Phase 2):** `getBrowserLocation` and `reverseGeocode` in
-`lib/geo.ts`. The Sell page (listing creation, Phase 1) depends on these, so they remain. Only the
-browse-specific helpers (`distanceMiles`, `formatDistance`) are rebuilt; `getBrowserLocation`/
-`reverseGeocode` are preserved as-is.
+**`lib/geo.ts` — rebuilt in full.** All four functions are rebuilt from scratch, not carried over.
+Constraint: the Sell page (listing creation, Phase 1) imports `getBrowserLocation` and
+`reverseGeocode`, so the rebuilt module MUST preserve their signatures and behavior
+(`getBrowserLocation(): Promise<[lng, lat]>`, `reverseGeocode(lng, lat): Promise<string>`) so the
+Sell flow keeps working unchanged. The internal Nominatim place-name formatting (`formatPlace`/
+`isJunkArea`) is rebuilt too; extracting it as a small pure function makes it unit-testable.
 
 ## Architecture & components
 
@@ -48,9 +51,13 @@ Target structure — small units, one responsibility each.
   default 5000; missing `lng`/`lat` → non-geo path) rather than 500.
 
 ### Client
-- **`lib/geo.ts`** (browse helpers) — `distanceMiles(a, b)` (Haversine, `[lng,lat]` inputs) and
-  `formatDistance(miles)`. Pure, no DOM, unit-testable. `getBrowserLocation`/`reverseGeocode`
-  remain in this file unchanged.
+- **`lib/geo.ts`** (rebuilt in full) —
+  - `distanceMiles(a, b)` (Haversine, `[lng,lat]` inputs) and `formatDistance(miles)`: pure, no DOM,
+    unit-testable.
+  - `getBrowserLocation(): Promise<[lng,lat]>`: wraps `navigator.geolocation`; same signature as
+    before so the Sell page is unaffected.
+  - `reverseGeocode(lng, lat): Promise<string>`: Nominatim lookup; same signature. Internal
+    place-name formatting extracted as a small pure helper for unit testing.
 - **`useNearbyItems(filters)`** hook (`client/lib/useNearbyItems.ts`) — owns geolocation capture,
   the `/items` fetch, and `items/loading/coords` state. Returns `{ items, loading, coords }`. The
   page becomes pure layout.
@@ -99,8 +106,12 @@ The rebuild adds the test rigor the original lacked. A test runner will be added
 - **Pure unit tests (TDD):**
   - `distanceMiles` / `formatDistance` — known coordinate pairs → known miles; threshold formatting
     ("right here", "x.x mi", "xx mi").
+  - place-name formatter (extracted from `reverseGeocode`) — sample Nominatim address objects →
+    expected "Area, City" labels; junk-area filtering.
   - `buildItemQuery` — filter combinations produce the expected SQL fragments / ORDER BY
     (geo vs non-geo path, type/category/q presence).
+  - `getBrowserLocation`/`reverseGeocode` network/DOM calls themselves stay out of unit tests
+    (verified manually); only their pure inner logic is tested.
 - **Manual end-to-end (CLAUDE.md definition of done):** run both servers and verify the
   geolocation feed, radius changes, map markers, distance labels, type filtering, and the
   no-location fallback work end-to-end before claiming completion.
@@ -108,11 +119,14 @@ The rebuild adds the test rigor the original lacked. A test runner will be added
 ## Removal-then-rebuild order
 
 1. Add Vitest to the relevant workspace(s) with a minimal config + script.
-2. Remove the browse-layer code: `NearbyMap.tsx`, the browse body of `app/page.tsx`, the
-   `distanceMiles`/`formatDistance` helpers, the geo query in `listItems`, and the distance label
-   on `ItemCard`. (Leave `getBrowserLocation`/`reverseGeocode`, all Phase 1 code intact.)
+2. Remove the browse-layer code: `NearbyMap.tsx`, the browse body of `app/page.tsx`, the **entire**
+   `lib/geo.ts`, the geo query in `listItems`, and the distance label on `ItemCard`. (Leave all
+   Phase 1 code intact; the Sell page keeps importing `getBrowserLocation`/`reverseGeocode`, which
+   are rebuilt with identical signatures in step 4.)
 3. Rebuild server-side: `buildItemQuery` + thin `listItems` (with unit tests first).
-4. Rebuild client helpers (`distanceMiles`/`formatDistance`, with unit tests first).
+4. Rebuild `lib/geo.ts` in full — `distanceMiles`/`formatDistance` + extracted place-name formatter
+   (unit tests first), plus `getBrowserLocation`/`reverseGeocode` (same signatures). Verify the
+   Sell page still compiles/works against the rebuilt module.
 5. Rebuild `useNearbyItems`, `<FilterBar>`, `<NearbyMap>`, then compose `app/page.tsx`; restore the
    `ItemCard` distance label.
 6. Manual end-to-end verification.
