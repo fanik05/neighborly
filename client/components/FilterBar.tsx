@@ -41,7 +41,7 @@ export default function FilterBar({
             onClick={() => onFilter(f.key)}
             className={`rounded-tag border px-3 py-1.5 font-mono text-xs font-medium uppercase tracking-wider transition-colors ${
               filter === f.key
-                ? 'border-pine bg-pine text-paper'
+                ? 'border-pine bg-pine text-onaccent'
                 : 'border-line bg-card text-muted hover:border-pine'
             }`}
           >

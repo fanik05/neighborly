@@ -99,7 +99,7 @@ export default function SellPage() {
               key={t.key}
               onClick={() => setListingType(t.key)}
               className={`rounded-tag border p-3 text-left transition-colors ${
-                listingType === t.key ? 'border-pine bg-pine/5' : 'border-line bg-white hover:border-pine'
+                listingType === t.key ? 'border-pine bg-pine/5' : 'border-line bg-card hover:border-pine'
               }`}
             >
               <span className="block font-display font-bold">{t.label}</span>

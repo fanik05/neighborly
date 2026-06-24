@@ -28,7 +28,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Set the theme before paint to avoid a flash: honor a saved choice,
+            else fall back to the OS preference. Mirrors ThemeToggle. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
+          }}
+        />
+      </head>
       {/* suppressHydrationWarning: browser extensions (Grammarly, password managers)
           inject attributes onto <body> before hydration; scoped to this element only. */}
       <body className="font-sans min-h-screen" suppressHydrationWarning>

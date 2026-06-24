@@ -62,7 +62,7 @@ export default function HomePage() {
       </div>
 
       {!loading && items.length > 0 && (
-        <section className="mb-5 overflow-hidden rounded-tag border border-line bg-white p-2">
+        <section className="mb-5 overflow-hidden rounded-tag border border-line bg-card p-2">
           <NearbyMap items={items} coords={coords} />
         </section>
       )}
@@ -70,7 +70,7 @@ export default function HomePage() {
       {loading ? (
         <p className="py-16 text-center text-muted">Finding what's nearby…</p>
       ) : items.length === 0 ? (
-        <div className="rounded-tag border border-dashed border-line bg-white py-16 text-center">
+        <div className="rounded-tag border border-dashed border-line bg-card py-16 text-center">
           <p className="font-display text-lg font-semibold">Nothing listed here yet</p>
           <p className="mt-1 text-muted">Be the first to share something with your neighbors.</p>
           <Link href="/sell" className="btn-primary mt-4">

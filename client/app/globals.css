@@ -24,6 +24,7 @@
   --color-available: #3e7a3b; /* checkout green — "available" */
   --color-muted: #6b6557; /* graphite captions */
   --color-line: #cdc2a8; /* manila hairline */
+  --color-onaccent: #f3eddf; /* text on colored buttons/badges (theme-aware) */
 
   /* next/font exposes these on <html> (see layout.tsx) */
   --font-display: var(--font-archivo), system-ui, sans-serif;
@@ -62,10 +63,10 @@
     @apply inline-flex items-center justify-center gap-2 rounded-tag px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-primary {
-    @apply bg-pine text-paper hover:bg-pine-dark;
+    @apply bg-pine text-onaccent hover:bg-pine-dark;
   }
   .btn-accent {
-    @apply bg-marigold text-paper hover:bg-marigold-dark;
+    @apply bg-marigold text-onaccent hover:bg-marigold-dark;
   }
   .btn-ghost {
     @apply border border-line bg-card text-ink hover:border-pine;
@@ -89,4 +90,35 @@
     border-color: currentColor;
     transform: rotate(-2.5deg);
   }
+}
+
+/* "After hours" — the lending desk at night. Reinterprets the same world in
+   dark walnut + graphite; manila cards dim under a worklamp, stamps brighten.
+   Activated by `.dark` on <html> (see layout.tsx + ThemeToggle). Overriding the
+   color vars re-resolves every utility — no per-component dark: variants. */
+.dark {
+  --color-paper: #1a1714; /* dark walnut desk */
+  --color-card: #262019; /* manila card, dimmed */
+  --color-ink: #ece2d0; /* warm paper-white text */
+  --color-onaccent: #1a1714; /* dark text on the brightened accents */
+  --color-pine: #7fb0d4; /* catalog blue, lifted for dark */
+  --color-pine-dark: #98c2e0;
+  --color-pine-light: #6c9fc4;
+  --color-marigold: #e07a5f; /* stamp red, lifted */
+  --color-marigold-dark: #ee8d73;
+  --color-stamp: #e07a5f;
+  --color-available: #6bbf67;
+  --color-muted: #9a9384; /* graphite, lightened for dark */
+  --color-line: #3a332b; /* dark hairline */
+  --shadow-card: 0 1px 0 #2c2620, 0 14px 30px -22px rgba(0, 0, 0, 0.7);
+}
+
+.dark body {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 27px,
+    rgba(236, 226, 208, 0.035) 27px,
+    rgba(236, 226, 208, 0.035) 28px
+  );
 }

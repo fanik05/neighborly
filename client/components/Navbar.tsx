@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Navbar() {
   const { user, logout, loading } = useAuth();
@@ -10,7 +11,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="grid h-8 w-8 place-items-center rounded-sm bg-pine font-display text-lg font-extrabold text-paper">
+          <span className="grid h-8 w-8 place-items-center rounded-sm bg-pine font-display text-lg font-extrabold text-onaccent">
             N
           </span>
           <span className="flex flex-col leading-none">
@@ -25,6 +26,7 @@ export default function Navbar() {
           <Link href="/" className="hidden px-3 py-2 text-sm font-medium text-muted hover:text-ink sm:block">
             Catalog
           </Link>
+          <ThemeToggle />
           {loading ? null : user ? (
             <>
               <Link href="/sell" className="btn-accent">
