@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@neighborly/shared": "*",
@@ -27,7 +26,6 @@
     "@types/react-dom": "^19.2.3",
     "postcss": "^8.4.47",
     "tailwindcss": "^4.3.1",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.9"
+    "typescript": "^6.0.3"
   }
 }
