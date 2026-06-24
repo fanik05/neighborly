@@ -1,45 +1,60 @@
 @import 'tailwindcss';
 @import 'leaflet/dist/leaflet.css';
 
-/* Tailwind v4 CSS-first theme — the "lending-shed" token system.
-   These generate utilities like bg-paper, text-pine, rounded-tag, shadow-card. */
+/* Tailwind v4 CSS-first theme — "The Lending Desk".
+   A tool-lending library: manila cardstock, catalog-blue structure, and a
+   rubber-stamp red that carries every piece of hyperlocal data.
+   Generates utilities like bg-paper, text-pine, text-stamp, rounded-tag, shadow-card. */
 @theme {
-  --color-paper: #fbf7f0; /* warm kraft background */
-  --color-ink: #1a1c1a;
-  --color-pine: #1f4d3b;
-  --color-pine-dark: #163a2c;
-  --color-pine-light: #2e6b52;
-  --color-marigold: #e8a33d;
-  --color-marigold-dark: #ce8a26;
-  --color-muted: #6b7269;
-  --color-line: #e5dfd3; /* hairline on paper */
+  --color-paper: #e7e0cf; /* manila desk surface */
+  --color-card: #f3eddf; /* lighter checkout-card stock */
+  --color-ink: #23201a; /* stamped ink */
 
-  /* next/font exposes --font-bricolage / --font-inter on <html> (see layout.tsx) */
-  --font-display: var(--font-bricolage), system-ui, sans-serif;
-  --font-sans: var(--font-inter), system-ui, sans-serif;
+  /* "pine" = the catalog-blue brand (kept under the legacy name so existing
+     utilities across login/register/forms stay cohesive without edits). */
+  --color-pine: #27445c;
+  --color-pine-dark: #1d3344;
+  --color-pine-light: #3a6076;
 
-  --radius-tag: 14px;
-  --shadow-card: 0 1px 0 #e5dfd3, 0 8px 24px -16px rgba(22, 58, 44, 0.35);
+  /* "marigold" = rubber-stamp red, the signature accent. */
+  --color-marigold: #b23a2e;
+  --color-marigold-dark: #8f2d24;
+  --color-stamp: #b23a2e; /* explicit name for the stamp signature */
+
+  --color-available: #3e7a3b; /* checkout green — "available" */
+  --color-muted: #6b6557; /* graphite captions */
+  --color-line: #cdc2a8; /* manila hairline */
+
+  /* next/font exposes these on <html> (see layout.tsx) */
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-sans: var(--font-public), system-ui, sans-serif;
+  --font-mono: var(--font-dmmono), ui-monospace, 'SFMono-Regular', monospace;
+
+  --radius-tag: 5px; /* cardstock corners, not pills */
+  --shadow-card: 0 1px 0 #cdc2a8, 0 12px 26px -20px rgba(35, 32, 26, 0.5);
 }
 
 @layer base {
   body {
     @apply bg-paper text-ink antialiased;
-    background-image: radial-gradient(rgba(31, 77, 59, 0.04) 1px, transparent 1px);
-    background-size: 22px 22px;
+    /* faint ledger ruling — the catalog desk */
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 27px,
+      rgba(39, 68, 92, 0.05) 27px,
+      rgba(39, 68, 92, 0.05) 28px
+    );
   }
   h1,
   h2,
   h3 {
-    @apply font-display tracking-tight;
+    @apply font-display font-extrabold tracking-tight;
   }
 }
 
 @layer components {
-  /* Lending-library tag: the signature card device */
-  .tag-tab {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide;
-  }
+  /* Buttons — squared cardstock, firm press */
   .btn,
   .btn-primary,
   .btn-accent,
@@ -50,15 +65,28 @@
     @apply bg-pine text-paper hover:bg-pine-dark;
   }
   .btn-accent {
-    @apply bg-marigold text-ink hover:bg-marigold-dark;
+    @apply bg-marigold text-paper hover:bg-marigold-dark;
   }
   .btn-ghost {
-    @apply border border-line bg-white text-ink hover:border-pine;
+    @apply border border-line bg-card text-ink hover:border-pine;
   }
   .field {
-    @apply w-full rounded-tag border border-line bg-white px-3.5 py-2.5 text-sm outline-none focus:border-pine focus:ring-2 focus:ring-pine/15;
+    @apply w-full rounded-tag border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-pine focus:ring-2 focus:ring-pine/15;
   }
   .label {
-    @apply mb-1.5 block text-sm font-medium text-ink;
+    @apply mb-1.5 block font-mono text-xs font-medium uppercase tracking-wider text-muted;
+  }
+
+  /* Mono catalog label — listing type, dates, plain data */
+  .tag-tab {
+    @apply inline-flex items-center gap-1 font-mono text-[0.7rem] font-medium uppercase tracking-wider;
+  }
+
+  /* The signature: a rubber-stamp impression. Color set by the caller
+     (text-stamp / text-pine / text-available); border inherits currentColor. */
+  .stamp {
+    @apply inline-flex items-center gap-1 rounded-[3px] border-2 px-1.5 py-0.5 font-mono text-[0.68rem] font-semibold uppercase tracking-wider;
+    border-color: currentColor;
+    transform: rotate(-2.5deg);
   }
 }
