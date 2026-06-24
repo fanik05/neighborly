@@ -17,7 +17,7 @@ export function distanceMiles(a: [number, number], b: [number, number]): number 
   const toRad = (d: number) => (d * Math.PI) / 180;
   const [lng1, lat1] = a;
   const [lng2, lat2] = b;
-  const R = 3958.8;
+  const R = 3958.8; // earth radius in miles
   const dLat = toRad(lat2 - lat1);
   const dLng = toRad(lng2 - lng1);
   const h =
@@ -26,6 +26,7 @@ export function distanceMiles(a: [number, number], b: [number, number]): number 
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
+/** Friendly distance label for the feed. */
 export function formatDistance(miles: number): string {
   if (miles < 0.1) return 'right here';
   if (miles < 10) return `${miles.toFixed(1)} mi`;
@@ -50,15 +51,17 @@ const isJunkArea = (s?: string): boolean =>
   !s || /community board|electoral|census|district \d|ward \d/i.test(s);
 
 /** Build a concise "Area, City" label from a Nominatim address object. */
-function formatPlace(data: { address?: NominatimAddress; display_name?: string }): string {
+export function formatPlace(data: { address?: NominatimAddress; display_name?: string }): string {
   const a = data.address ?? {};
   const area = [a.neighbourhood, a.suburb, a.quarter, a.city_district, a.road].find(
     (v) => !isJunkArea(v)
   );
   const city = a.city || a.town || a.village || a.municipality || a.county;
-  const parts = [area, city].filter((v, i, arr): v is string => Boolean(v) && arr.indexOf(v) === i);
+  const parts = [area, city].filter(
+    (v, i, arr): v is string => Boolean(v) && arr.indexOf(v) === i
+  );
   if (parts.length) return parts.join(', ');
-  return data.display_name?.split(',').slice(0, 2).join(', ').trim() ?? '';
+  return data.display_name?.split(',').slice(0, 2).map((s) => s.trim()).join(', ') ?? '';
 }
 
 /**
