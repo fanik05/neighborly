@@ -155,7 +155,7 @@ export default function LocationSearch({
       </form>
 
       {status === 'results' && (
-        <ul className="mt-2 overflow-hidden rounded-tag border border-line bg-white">
+        <ul className="mt-2 overflow-hidden rounded-tag border border-line bg-card">
           {results.map((place, i) => (
             <li key={`${place.label}-${i}`}>
               <button
