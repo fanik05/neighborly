@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
 import type { Item } from '@/lib/types';
 
-// Fallback map center (New York City) in Leaflet's [lat, lng] format.
+// Fallback map center (New York City) in Leaflet's [lat, lng] order.
 const DEFAULT_CENTER: [number, number] = [40.7128, -74.006];
 
 export default function NearbyMap({
@@ -14,19 +14,28 @@ export default function NearbyMap({
   items: Item[];
   coords: [number, number] | null;
 }) {
-  // Leaflet uses [lat, lng], while our API and DB use GeoJSON [lng, lat].
+  // Our API/DB use GeoJSON [lng, lat]; Leaflet wants [lat, lng] — swap here only.
   const center = coords ? ([coords[1], coords[0]] as [number, number]) : DEFAULT_CENTER;
 
   return (
     <div aria-label="Nearby listings map">
-      <MapContainer center={center} zoom={coords ? 12 : 10} scrollWheelZoom className="h-80 w-full rounded-tag">
+      <MapContainer
+        center={center}
+        zoom={coords ? 12 : 10}
+        scrollWheelZoom
+        className="h-80 w-full rounded-tag"
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
         {coords && (
-          <CircleMarker center={[coords[1], coords[0]]} radius={8} pathOptions={{ color: '#1f4d3b', weight: 3 }}>
+          <CircleMarker
+            center={[coords[1], coords[0]]}
+            radius={8}
+            pathOptions={{ color: '#1f4d3b', weight: 3 }}
+          >
             <Popup>You are here</Popup>
           </CircleMarker>
         )}

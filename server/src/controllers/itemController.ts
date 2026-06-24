@@ -5,6 +5,7 @@ import { uploadBuffer, destroyAssets } from '../config/cloudinary.js';
 import { asyncHandler, httpError } from '../middleware/error.js';
 import { toItemDTO } from '../db/mappers.js';
 import type { ItemImage, ListingType } from '@neighborly/shared';
+import { parseItemFilters } from './itemFilters.js';
 
 const LISTING_TYPES: ListingType[] = ['sale', 'loan', 'free'];
 const ITEM_STATUSES = ['available', 'borrowed', 'sold'] as const;
@@ -19,26 +20,27 @@ const ownerCols = {
 
 /**
  * GET /api/items
- * Optional query: lng, lat, radius (meters, default 5000), category, type, q
- * If lng/lat present, results are ordered nearest-first via PostGIS distance.
+ * Optional query: lng, lat, radius (meters, default 5000), category, type, q.
+ * When lng+lat are present, results are filtered to the radius and ordered nearest-first.
  */
 export const listItems = asyncHandler(async (req, res) => {
-  const { lng, lat, radius = 5000, category, type, q } = req.query;
+  const f = parseItemFilters(req.query as Record<string, unknown>);
   const conds: SQL[] = [];
-  if (category) conds.push(eq(items.category, String(category)));
-  if (type) conds.push(eq(items.listingType, String(type) as ListingType));
-  if (q) {
+
+  if (f.category) conds.push(eq(items.category, f.category));
+  if (f.type) conds.push(eq(items.listingType, f.type));
+  if (f.q) {
     conds.push(
-      sql`to_tsvector('english', ${items.title} || ' ' || ${items.description}) @@ plainto_tsquery('english', ${String(q)})`
+      sql`to_tsvector('english', ${items.title} || ' ' || ${items.description}) @@ plainto_tsquery('english', ${f.q})`
     );
   }
 
-  const hasGeo = lng !== undefined && lat !== undefined;
-  const point = hasGeo
-    ? sql`ST_SetSRID(ST_MakePoint(${Number(lng)}, ${Number(lat)}), 4326)::geography`
-    : null;
-  if (hasGeo && point) {
-    conds.push(sql`ST_DWithin(${items.location}::geography, ${point}, ${Number(radius)})`);
+  const point =
+    f.hasGeo && f.lng !== undefined && f.lat !== undefined
+      ? sql`ST_SetSRID(ST_MakePoint(${f.lng}, ${f.lat}), 4326)::geography`
+      : null;
+  if (point) {
+    conds.push(sql`ST_DWithin(${items.location}::geography, ${point}, ${f.radius})`);
   }
 
   const rows = await db
@@ -46,7 +48,7 @@ export const listItems = asyncHandler(async (req, res) => {
     .from(items)
     .innerJoin(users, eq(items.ownerId, users.id))
     .where(conds.length ? and(...conds) : undefined)
-    .orderBy(hasGeo && point ? sql`${items.location}::geography <-> ${point}` : desc(items.createdAt))
+    .orderBy(point ? sql`${items.location}::geography <-> ${point}` : desc(items.createdAt))
     .limit(100);
 
   res.json(rows.map((r) => toItemDTO(r.item, r.owner)));
