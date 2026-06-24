@@ -21,23 +21,31 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Hero — the thesis: what can I get from my street right now? */}
-      <section className="mb-8 rounded-tag border border-line bg-white p-6 shadow-card sm:p-10">
-        <p className="font-display text-sm font-semibold uppercase tracking-widest text-marigold-dark">
-          {coords ? 'Near you' : 'Your neighborhood'}
-        </p>
-        <h1 className="mt-2 max-w-2xl text-4xl font-bold leading-[1.05] sm:text-5xl">
-          Borrow the drill. Sell the bike. Lend a hand.
+      {/* Hero — the lending desk: what can I check out from my street right now? */}
+      <section className="relative mb-8 overflow-hidden rounded-tag border border-line bg-card p-6 shadow-card sm:p-10">
+        {/* corner rubber stamp — the signature */}
+        <span className="pointer-events-none absolute right-4 top-4 hidden rotate-[7deg] items-center rounded-[3px] border-2 border-stamp px-2 py-1 font-mono text-[0.7rem] font-semibold uppercase tracking-wider text-stamp sm:inline-flex">
+          Lend · Borrow · Trade
+        </span>
+
+        <p className="tag-tab text-pine">The lending desk · {coords ? 'near you' : 'your neighborhood'}</p>
+        <h1 className="mt-3 max-w-2xl text-4xl leading-none sm:text-6xl">
+          Borrow the drill.
+          <br />
+          Sell the bike.
+          <br />
+          Lend a hand.
         </h1>
-        <p className="mt-3 max-w-xl text-muted">
-          Neighborly is the shared shed for your street — find tools and goods a short walk away.
+        <p className="mt-4 max-w-xl text-muted">
+          Neighborly is the shared shed for your street — check out tools and goods a short walk
+          away.
         </p>
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-6 flex flex-wrap gap-2">
           <Link href="/sell" className="btn-accent">
             List an item
           </Link>
           <a href="#feed" className="btn-ghost">
-            Browse nearby
+            Browse the catalog
           </a>
         </div>
       </section>

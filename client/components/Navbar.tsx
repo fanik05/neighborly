@@ -9,16 +9,21 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-tag bg-pine text-paper font-display text-lg">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="grid h-8 w-8 place-items-center rounded-sm bg-pine font-display text-lg font-extrabold text-paper">
             N
           </span>
-          <span className="font-display text-xl font-bold tracking-tight">Neighborly</span>
+          <span className="flex flex-col leading-none">
+            <span className="font-display text-lg font-extrabold tracking-tight">Neighborly</span>
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-muted">
+              Lending desk
+            </span>
+          </span>
         </Link>
 
         <nav className="flex items-center gap-2">
           <Link href="/" className="hidden px-3 py-2 text-sm font-medium text-muted hover:text-ink sm:block">
-            Browse
+            Catalog
           </Link>
           {loading ? null : user ? (
             <>
