@@ -4,10 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useNearbyItems } from '@/lib/useNearbyItems';
-import { distanceMiles, formatDistance } from '@/lib/geo';
+import { distanceMiles, formatDistance, type PlaceResult } from '@/lib/geo';
 import type { ListingType } from '@/lib/types';
 import ItemCard from '@/components/ItemCard';
 import FilterBar from '@/components/FilterBar';
+import LocationSearch from '@/components/LocationSearch';
 
 const NearbyMap = dynamic(() => import('@/components/NearbyMap'), { ssr: false });
 
@@ -17,7 +18,19 @@ const DEFAULT_RADIUS_METERS = 16093;
 export default function HomePage() {
   const [filter, setFilter] = useState<ListingType | 'all'>('all');
   const [radius, setRadius] = useState(DEFAULT_RADIUS_METERS);
-  const { items, loading, coords } = useNearbyItems({ type: filter, radius });
+  const [override, setOverride] = useState<[number, number] | null>(null);
+  const [overrideLabel, setOverrideLabel] = useState('');
+  const { items, loading, coords } = useNearbyItems({ type: filter, radius, override });
+
+  function pickPlace(place: PlaceResult) {
+    setOverride(place.coords);
+    setOverrideLabel(place.label);
+  }
+
+  function clearPlace() {
+    setOverride(null);
+    setOverrideLabel('');
+  }
 
   return (
     <div>
@@ -50,7 +63,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div id="feed">
+      <div id="feed" className="mb-5 space-y-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="sm:max-w-sm sm:flex-1">
+            <LocationSearch onSelect={pickPlace} placeholder="Search a neighborhood or address" />
+          </div>
+          {override && (
+            <p className="text-xs text-muted">
+              📍 Showing near <span className="font-semibold text-ink">{overrideLabel}</span> ·{' '}
+              <button type="button" onClick={clearPlace} className="text-pine underline">
+                Clear
+              </button>
+            </p>
+          )}
+        </div>
         <FilterBar
           filter={filter}
           onFilter={setFilter}
