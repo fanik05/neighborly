@@ -9,6 +9,7 @@ import { notFound, errorHandler } from './middleware/error.js';
 import authRoutes from './routes/authRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
 import conversationRoutes from './routes/conversationRoutes.js';
+import loanRoutes from './routes/loanRoutes.js';
 import { registerChat } from './socket/chat.js';
 
 const app = express();
@@ -23,6 +24,7 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/conversations', conversationRoutes);
+app.use('/api/loans', loanRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
