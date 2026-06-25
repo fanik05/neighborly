@@ -21,13 +21,6 @@ export function nextLoanStatus(current: LoanStatus, action: LoanAction['action']
   return t && t.from === current ? t.to : null;
 }
 
-const ownerCols = {
-  id: users.id,
-  name: users.name,
-  avatarUrl: users.avatarUrl,
-  neighborhood: users.neighborhood,
-};
-
 /** Fetch a single loan as a DTO (joins item + both users), or null. */
 async function loanDTOById(id: string): Promise<LoanRequestDTO | null> {
   const borrower = alias(users, 'borrower');
