@@ -1,5 +1,5 @@
-import type { UserDTO, ItemDTO, ItemOwner, GeoPoint, MessageDTO } from '@neighborly/shared';
-import type { users, items, messages } from './schema.js';
+import type { UserDTO, ItemDTO, ItemOwner, GeoPoint, MessageDTO, LoanRequestDTO, LoanItemRef } from '@neighborly/shared';
+import type { users, items, messages, loanRequests } from './schema.js';
 
 type Point = { x: number; y: number };
 
@@ -49,5 +49,25 @@ export function toMessageDTO(m: typeof messages.$inferSelect): MessageDTO {
     text: m.text,
     read: m.read,
     createdAt: m.createdAt.toISOString(),
+  };
+}
+
+type LoanItemRow = { id: string; title: string; images: { url: string }[]; listingType: LoanItemRef['listingType'] };
+
+export function toLoanRequestDTO(
+  loan: typeof loanRequests.$inferSelect,
+  item: LoanItemRow,
+  borrower: ItemOwner,
+  lender: ItemOwner
+): LoanRequestDTO {
+  return {
+    id: loan.id,
+    item: { id: item.id, title: item.title, cover: item.images?.[0]?.url, listingType: item.listingType },
+    borrower,
+    lender,
+    status: loan.status,
+    startDate: loan.startDate?.toISOString(),
+    dueDate: loan.dueDate?.toISOString(),
+    createdAt: loan.createdAt.toISOString(),
   };
 }

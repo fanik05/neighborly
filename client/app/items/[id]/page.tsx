@@ -5,9 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { useLoans } from '@/lib/useLoans';
 import { reverseGeocode } from '@/lib/geo';
 import type { Item } from '@/lib/types';
 import type { Conversation } from '@/lib/types';
+import LoanStatusPanel from '@/components/LoanStatusPanel';
 
 const TYPE_LABEL: Record<Item['listingType'], string> = {
   sale: 'For sale',
@@ -19,6 +21,12 @@ export default function ItemDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { user } = useAuth();
+  const { borrowing, lending } = useLoans();
+  // A compact signal of this user's loan statuses for this item; changes when they act.
+  const loanSignal = [...borrowing, ...lending]
+    .filter((l) => l.item.id === id)
+    .map((l) => l.status)
+    .join(',');
   const [item, setItem] = useState<Item | null>(null);
   const [active, setActive] = useState(0);
   const [error, setError] = useState('');
@@ -28,7 +36,7 @@ export default function ItemDetailPage() {
     api<Item>(`/items/${id}`)
       .then(setItem)
       .catch((err) => setError(err instanceof Error ? err.message : 'Not found'));
-  }, [id]);
+  }, [id, loanSignal]);
 
   // Fallback: resolve a name client-side for items saved before addresses were stored.
   useEffect(() => {
@@ -154,6 +162,8 @@ export default function ItemDetailPage() {
             </Link>
           )}
         </div>
+
+        {item.listingType === 'loan' && <LoanStatusPanel item={item} />}
       </div>
     </div>
   );

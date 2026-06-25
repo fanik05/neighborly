@@ -15,3 +15,10 @@ export type {
   ReadEvent,
   PresenceEvent,
 } from '@neighborly/shared';
+export type {
+  LoanRequestDTO as LoanRequest,
+  LoanItemRef,
+  LoanStatus,
+  CreateLoanPayload,
+  LoanAction,
+} from '@neighborly/shared';

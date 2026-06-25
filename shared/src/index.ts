@@ -8,7 +8,7 @@
 
 export type ListingType = 'sale' | 'loan' | 'free';
 export type ItemStatus = 'available' | 'borrowed' | 'sold';
-export type LoanStatus = 'pending' | 'approved' | 'declined' | 'returned';
+export type LoanStatus = 'pending' | 'approved' | 'declined' | 'active' | 'returned';
 
 /** GeoJSON point — coordinates are ALWAYS [longitude, latitude]. */
 export interface GeoPoint {
@@ -116,15 +116,32 @@ export interface PresenceEvent {
   online: boolean;
 }
 
+export interface LoanItemRef {
+  id: string;
+  title: string;
+  cover?: string;
+  listingType: ListingType;
+}
+
 export interface LoanRequestDTO {
   id: string;
-  item: string;
-  borrower: string;
-  lender: string;
+  item: LoanItemRef;
+  borrower: ItemOwner;
+  lender: ItemOwner;
   status: LoanStatus;
   startDate?: string;
   dueDate?: string;
   createdAt: string;
+}
+
+export interface CreateLoanPayload {
+  itemId: string;
+  startDate: string;
+  dueDate: string;
+}
+
+export interface LoanAction {
+  action: 'approve' | 'decline' | 'pickup' | 'return';
 }
 
 /* ---- Auth payloads ---- */
