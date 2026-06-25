@@ -77,15 +77,17 @@ export function registerChat(io: Server): void {
       })
     );
 
-    socket.on('typing', (payload: TypingClient) => {
-      const conversationId = String(payload?.conversationId || '');
-      if (!conversationId) return;
-      socket.to(conversationId).emit('typing', {
-        conversationId,
-        userId,
-        isTyping: Boolean(payload?.isTyping),
-      });
-    });
+    socket.on('typing', (payload: TypingClient) =>
+      safe(async () => {
+        const conversationId = String(payload?.conversationId || '');
+        if (!conversationId || !(await isParticipant(conversationId, userId))) return;
+        socket.to(conversationId).emit('typing', {
+          conversationId,
+          userId,
+          isTyping: Boolean(payload?.isTyping),
+        });
+      })
+    );
 
     socket.on('message:read', (payload: ReadClient) =>
       safe(async () => {
