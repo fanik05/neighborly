@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth';
 import { reverseGeocode } from '@/lib/geo';
 import type { Item } from '@/lib/types';
 import type { Conversation } from '@/lib/types';
+import LoanStatusPanel from '@/components/LoanStatusPanel';
 
 const TYPE_LABEL: Record<Item['listingType'], string> = {
   sale: 'For sale',
@@ -154,6 +155,8 @@ export default function ItemDetailPage() {
             </Link>
           )}
         </div>
+
+        {item.listingType === 'loan' && <LoanStatusPanel item={item} />}
       </div>
     </div>
   );
