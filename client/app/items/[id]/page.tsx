@@ -142,14 +142,21 @@ export default function ItemDetailPage() {
           <div className="mt-4 rounded-tag border border-line bg-card p-4">
             <p className="text-xs uppercase tracking-wide text-muted">📍 Location</p>
             <p className="mt-0.5 font-semibold">{item.address || placeName || 'Looking up area…'}</p>
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setMapOpen(true)}
-              className="mt-2 block w-full overflow-hidden rounded-tag border border-line"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setMapOpen(true);
+                }
+              }}
               aria-label="Open larger map"
+              className="mt-2 block w-full cursor-pointer overflow-hidden rounded-tag border border-line"
             >
-              <LocationMap coords={item.location.coordinates} className="h-40 w-full" />
-            </button>
+              <LocationMap coords={item.location.coordinates} className="h-40 w-full" zoomControl={false} />
+            </div>
           </div>
         )}
 
@@ -159,6 +166,8 @@ export default function ItemDetailPage() {
             onClick={() => setMapOpen(false)}
           >
             <div
+              role="dialog"
+              aria-modal="true"
               className="w-full max-w-2xl overflow-hidden rounded-tag border border-line bg-card shadow-card"
               onClick={(e) => e.stopPropagation()}
             >

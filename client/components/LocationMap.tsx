@@ -7,14 +7,16 @@ export default function LocationMap({
   coords,
   className = 'h-48 w-full rounded-tag',
   zoom = 14,
+  zoomControl = true,
 }: {
   coords: [number, number];
   className?: string;
   zoom?: number;
+  zoomControl?: boolean;
 }) {
   const center: [number, number] = [coords[1], coords[0]];
   return (
-    <MapContainer center={center} zoom={zoom} scrollWheelZoom={false} className={className}>
+    <MapContainer center={center} zoom={zoom} scrollWheelZoom={false} zoomControl={zoomControl} className={className}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
