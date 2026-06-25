@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Archivo, Public_Sans, DM_Mono } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth';
+import { ConversationsProvider } from '@/lib/useConversations';
 import Navbar from '@/components/Navbar';
 
 // "The Lending Desk" type system:
@@ -46,8 +47,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           inject attributes onto <body> before hydration; scoped to this element only. */}
       <body className="font-sans min-h-screen" suppressHydrationWarning>
         <AuthProvider>
-          <Navbar />
-          <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+          <ConversationsProvider>
+            <Navbar />
+            <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+          </ConversationsProvider>
         </AuthProvider>
       </body>
     </html>

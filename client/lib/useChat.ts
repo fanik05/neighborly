@@ -63,6 +63,7 @@ export function useChat(conversationId: string | null) {
       if (typingTimeout.current) clearTimeout(typingTimeout.current);
       setMessages([]);
       setPeerTyping(false);
+      setPeerOnline(false);
       setPeerReadAt(false);
     };
   }, [conversationId, user]);
