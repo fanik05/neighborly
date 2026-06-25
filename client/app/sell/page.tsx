@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { getBrowserLocation, reverseGeocode } from '@/lib/geo';
 import type { Item, ListingType } from '@/lib/types';
 import ImageUploader from '@/components/ImageUploader';
 import LocationSearch from '@/components/LocationSearch';
+const LocationPicker = dynamic(() => import('@/components/LocationPicker'), { ssr: false });
 
 const TYPES: { key: ListingType; label: string; hint: string }[] = [
   { key: 'loan', label: 'Lend', hint: 'Neighbors borrow & return it' },
@@ -35,18 +37,25 @@ export default function SellPage() {
     if (!loading && !user) router.replace('/login');
   }, [loading, user, router]);
 
+  // Single funnel for every way to set the listing's location.
+  async function setLocation(c: [number, number], label?: string) {
+    setCoords(c);
+    if (label !== undefined) {
+      setAddress(label);
+      return;
+    }
+    try {
+      setAddress(await reverseGeocode(c[0], c[1]));
+    } catch {
+      setAddress('');
+    }
+  }
+
   async function useMyLocation() {
     setError('');
     setLocating(true);
     try {
-      const c = await getBrowserLocation();
-      setCoords(c);
-      // Resolve a friendly place name; coordinates still work if this fails.
-      try {
-        setAddress(await reverseGeocode(c[0], c[1]));
-      } catch {
-        setAddress('');
-      }
+      await setLocation(await getBrowserLocation());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Location unavailable');
     } finally {
@@ -179,12 +188,13 @@ export default function SellPage() {
           <div className="mt-2">
             <p className="mb-1 text-xs text-muted">or search an address or place</p>
             <LocationSearch
-              onSelect={(p) => {
-                setCoords(p.coords);
-                setAddress(p.label);
-              }}
+              onSelect={(p) => setLocation(p.coords, p.label)}
               placeholder="e.g. Williamsburg, Brooklyn"
             />
+          </div>
+          <div className="mt-3">
+            <p className="mb-1 text-xs text-muted">Drop or drag the pin to set the exact spot</p>
+            <LocationPicker value={coords} onChange={(c) => setLocation(c)} />
           </div>
           {coords && (
             <p className="mt-2 flex items-center gap-1.5 text-xs text-pine">
