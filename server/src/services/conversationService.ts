@@ -185,3 +185,11 @@ export async function markRead(conversationId: string, userId: string): Promise<
       )
     );
 }
+
+export async function participantIdsForConversation(conversationId: string): Promise<string[]> {
+  const rows = await db
+    .select({ userId: conversationParticipants.userId })
+    .from(conversationParticipants)
+    .where(eq(conversationParticipants.conversationId, conversationId));
+  return rows.map((r) => r.userId);
+}
