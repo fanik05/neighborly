@@ -62,12 +62,58 @@ export interface MessageDTO {
   createdAt: string;
 }
 
+/** Compact item reference shown on a conversation row. */
+export interface ConversationItemRef {
+  id: string;
+  title: string;
+  cover?: string;
+}
+
 export interface ConversationDTO {
   id: string;
-  participants: ItemOwner[];
-  item?: string;
+  /** The other participant (never the caller). */
+  otherParticipant: ItemOwner;
+  /** The listing this thread is about; absent if the item was deleted. */
+  item?: ConversationItemRef;
   lastMessage: string;
+  /** Messages addressed to the caller that they haven't read yet. */
+  unreadCount: number;
   updatedAt: string;
+}
+
+/* ---- Socket.io payloads (shared by client and server) ---- */
+/** client → server */
+export interface MessageSend {
+  conversationId: string;
+  text: string;
+}
+export interface TypingClient {
+  conversationId: string;
+  isTyping: boolean;
+}
+export interface ReadClient {
+  conversationId: string;
+}
+/** server → client */
+export interface MessageNew {
+  message: MessageDTO;
+}
+export interface InboxMessageEvent {
+  conversationId: string;
+  message: MessageDTO;
+}
+export interface TypingEvent {
+  conversationId: string;
+  userId: string;
+  isTyping: boolean;
+}
+export interface ReadEvent {
+  conversationId: string;
+  readerId: string;
+}
+export interface PresenceEvent {
+  userId: string;
+  online: boolean;
 }
 
 export interface LoanRequestDTO {
