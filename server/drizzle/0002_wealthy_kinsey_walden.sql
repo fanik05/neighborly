@@ -1,0 +1,1 @@
+ALTER TYPE "public"."loan_status" ADD VALUE 'active' BEFORE 'returned';
