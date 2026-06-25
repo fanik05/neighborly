@@ -1,22 +1,22 @@
 import Link from 'next/link';
 import type { Item } from '@/lib/types';
 
-const TYPE_STYLES: Record<Item['listingType'], { label: string; cls: string }> = {
-  sale: { label: 'For sale', cls: 'bg-marigold/20 text-marigold-dark' },
-  loan: { label: 'To borrow', cls: 'bg-pine/15 text-pine' },
-  free: { label: 'Free', cls: 'bg-ink/10 text-ink' },
+const TYPE_LABEL: Record<Item['listingType'], string> = {
+  sale: 'For sale',
+  loan: 'For loan',
+  free: 'Free',
 };
 
 export default function ItemCard({ item, distance }: { item: Item; distance?: string }) {
-  const type = TYPE_STYLES[item.listingType];
   const cover = item.images[0]?.url;
+  const typeLabel = TYPE_LABEL[item.listingType];
 
   return (
     <Link
       href={`/items/${item.id}`}
-      className="group relative block overflow-hidden rounded-tag border border-line bg-white shadow-card transition-transform hover:-translate-y-0.5"
+      className="group relative block overflow-hidden rounded-tag border border-line bg-card shadow-card transition-transform hover:-translate-y-0.5"
     >
-      {/* punched-hole detail, like a real tag */}
+      {/* binder punch-hole — a real checkout card */}
       <span className="absolute left-3 top-3 z-10 h-2.5 w-2.5 rounded-full bg-paper ring-2 ring-line" />
 
       <div className="aspect-4/3 w-full overflow-hidden bg-paper">
@@ -28,21 +28,26 @@ export default function ItemCard({ item, distance }: { item: Item; distance?: st
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="grid h-full place-items-center text-muted">No photo</div>
+          <div className="grid h-full place-items-center font-mono text-xs uppercase tracking-wider text-muted">
+            No photo
+          </div>
         )}
       </div>
 
-      <div className="space-y-1.5 p-3.5">
+      {/* checkout-card footer — catalog data, with a stamped distance */}
+      <div className="space-y-2 border-t border-dashed border-line p-3.5">
         <div className="flex items-center justify-between gap-2">
-          <span className={`tag-tab ${type.cls}`}>{type.label}</span>
+          <span className="tag-tab text-pine">{typeLabel}</span>
           {item.listingType === 'sale' && item.price > 0 && (
-            <span className="font-display text-lg font-bold">${item.price}</span>
+            <span className="font-mono text-sm font-medium text-ink">${item.price}</span>
           )}
         </div>
-        <h3 className="line-clamp-1 text-base font-semibold">{item.title}</h3>
-        <div className="flex items-center justify-between text-xs text-muted">
-          <span className="line-clamp-1">{item.owner?.neighborhood || item.owner?.name}</span>
-          {distance && <span className="shrink-0">📍 {distance}</span>}
+        <h3 className="line-clamp-1 font-display text-base font-bold leading-tight">{item.title}</h3>
+        <div className="flex items-center justify-between gap-2">
+          <span className="line-clamp-1 text-xs text-muted">
+            {item.owner?.neighborhood || item.owner?.name}
+          </span>
+          {distance && <span className="stamp shrink-0 text-stamp">{distance}</span>}
         </div>
       </div>
     </Link>

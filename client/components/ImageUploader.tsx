@@ -25,7 +25,7 @@ export default function ImageUploader({ onChange, max = 5 }: Props) {
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="flex w-full flex-col items-center justify-center gap-1 rounded-tag border-2 border-dashed border-line bg-white py-8 text-muted hover:border-pine"
+        className="flex w-full flex-col items-center justify-center gap-1 rounded-tag border-2 border-dashed border-line bg-card py-8 text-muted hover:border-pine"
       >
         <span className="text-2xl">📷</span>
         <span className="text-sm font-medium">Add up to {max} photos</span>
