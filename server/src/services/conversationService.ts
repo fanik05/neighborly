@@ -158,12 +158,18 @@ export async function persistMessage(
   senderId: string,
   text: string
 ): Promise<MessageDTO> {
-  const [row] = await db
-    .insert(messages)
-    .values({ conversationId, senderId, text: text.trim() })
-    .returning();
-  await db.update(conversations).set({ lastMessage: text.trim() }).where(eq(conversations.id, conversationId));
-  return toMessageDTO(row);
+  const body = text.trim();
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .insert(messages)
+      .values({ conversationId, senderId, text: body })
+      .returning();
+    await tx
+      .update(conversations)
+      .set({ lastMessage: body })
+      .where(eq(conversations.id, conversationId));
+    return toMessageDTO(row);
+  });
 }
 
 /** Mark every message NOT sent by this user in the conversation as read. */
