@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { reverseGeocode } from '@/lib/geo';
 import type { Item } from '@/lib/types';
+import type { Conversation } from '@/lib/types';
 
 const TYPE_LABEL: Record<Item['listingType'], string> = {
   sale: 'For sale',
@@ -37,6 +38,18 @@ export default function ItemDetailPage() {
       .then(setPlaceName)
       .catch(() => setPlaceName(''));
   }, [item]);
+
+  async function messageOwner() {
+    try {
+      const conv = await api<Conversation>('/conversations', {
+        method: 'POST',
+        body: JSON.stringify({ itemId: id }),
+      });
+      router.push(`/messages/${conv.id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not start conversation');
+    }
+  }
 
   async function onDelete() {
     if (!confirm('Delete this listing?')) return;
@@ -132,8 +145,7 @@ export default function ItemDetailPage() {
               </button>
             </>
           ) : user ? (
-            // Chat + loan request land in Phase 3.
-            <button className="btn-primary" disabled title="Messaging arrives in Phase 3">
+            <button onClick={messageOwner} className="btn-primary">
               Message {item.owner?.name?.split(' ')[0]}
             </button>
           ) : (

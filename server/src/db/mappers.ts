@@ -1,5 +1,5 @@
-import type { UserDTO, ItemDTO, ItemOwner, GeoPoint } from '@neighborly/shared';
-import type { users, items } from './schema.js';
+import type { UserDTO, ItemDTO, ItemOwner, GeoPoint, MessageDTO } from '@neighborly/shared';
+import type { users, items, messages } from './schema.js';
 
 type Point = { x: number; y: number };
 
@@ -38,5 +38,16 @@ export function toItemDTO(item: typeof items.$inferSelect, owner: ItemOwner): It
     status: item.status,
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
+  };
+}
+
+export function toMessageDTO(m: typeof messages.$inferSelect): MessageDTO {
+  return {
+    id: m.id,
+    conversation: m.conversationId,
+    sender: m.senderId,
+    text: m.text,
+    read: m.read,
+    createdAt: m.createdAt.toISOString(),
   };
 }

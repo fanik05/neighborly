@@ -2,3 +2,16 @@
 // Single source of truth lives in @neighborly/shared so client/server can't drift.
 export type { ListingType, ItemStatus, GeoPoint, ItemImage } from '@neighborly/shared';
 export type { ItemDTO as Item, UserDTO as User, ItemOwner } from '@neighborly/shared';
+export type {
+  MessageDTO as Message,
+  ConversationDTO as Conversation,
+  ConversationItemRef,
+  MessageSend,
+  TypingClient,
+  ReadClient,
+  MessageNew,
+  InboxMessageEvent,
+  TypingEvent,
+  ReadEvent,
+  PresenceEvent,
+} from '@neighborly/shared';
