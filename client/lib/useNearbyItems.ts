@@ -8,23 +8,28 @@ import type { Item, ListingType } from '@/lib/types';
 interface NearbyOpts {
   type: ListingType | 'all';
   radius: number;
+  /** Manual center override (e.g. a searched place); falls back to browser location when null. */
+  override: [number, number] | null;
 }
 
 /**
  * Owns geolocation capture + the /items fetch for the home feed.
- * Falls back to a non-geo (newest-first) request when location is unavailable.
+ * Effective center = override ?? browser location; falls back to a non-geo
+ * (newest-first) request when neither is available.
  */
-export function useNearbyItems({ type, radius }: NearbyOpts) {
+export function useNearbyItems({ type, radius, override }: NearbyOpts) {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
-  const [coords, setCoords] = useState<[number, number] | null>(null);
+  const [browserCoords, setBrowserCoords] = useState<[number, number] | null>(null);
 
   // Capture the visitor's location once.
   useEffect(() => {
     getBrowserLocation()
-      .then(setCoords)
-      .catch(() => setCoords(null));
+      .then(setBrowserCoords)
+      .catch(() => setBrowserCoords(null));
   }, []);
+
+  const coords = override ?? browserCoords;
 
   useEffect(() => {
     setLoading(true);

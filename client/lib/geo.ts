@@ -74,3 +74,34 @@ export async function reverseGeocode(lng: number, lat: number): Promise<string> 
   if (!res.ok) throw new Error('Could not look up place name');
   return formatPlace(await res.json());
 }
+
+export interface PlaceResult {
+  /** Concise "Area, City" label, consistent with reverseGeocode output. */
+  label: string;
+  /** [lng, lat] — GeoJSON order. */
+  coords: [number, number];
+}
+
+interface NominatimSearchRow {
+  lat: string;
+  lon: string;
+  address?: NominatimAddress;
+  display_name?: string;
+}
+
+/**
+ * Forward-geocode a typed query to up to 5 places via OpenStreetMap Nominatim
+ * (free, no key). Returns [] for a blank query or no matches; throws on error.
+ */
+export async function searchPlaces(query: string): Promise<PlaceResult[]> {
+  const q = query.trim();
+  if (!q) return [];
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q)}&addressdetails=1&limit=5`;
+  const res = await fetch(url, { headers: { Accept: 'application/json' } });
+  if (!res.ok) throw new Error('Could not search for places');
+  const rows = (await res.json()) as NominatimSearchRow[];
+  return rows.map((row) => ({
+    label: formatPlace(row),
+    coords: [Number(row.lon), Number(row.lat)] as [number, number],
+  }));
+}

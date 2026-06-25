@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth';
 import { getBrowserLocation, reverseGeocode } from '@/lib/geo';
 import type { Item, ListingType } from '@/lib/types';
 import ImageUploader from '@/components/ImageUploader';
+import LocationSearch from '@/components/LocationSearch';
 
 const TYPES: { key: ListingType; label: string; hint: string }[] = [
   { key: 'loan', label: 'Lend', hint: 'Neighbors borrow & return it' },
@@ -99,7 +100,7 @@ export default function SellPage() {
               key={t.key}
               onClick={() => setListingType(t.key)}
               className={`rounded-tag border p-3 text-left transition-colors ${
-                listingType === t.key ? 'border-pine bg-pine/5' : 'border-line bg-white hover:border-pine'
+                listingType === t.key ? 'border-pine bg-pine/5' : 'border-line bg-card hover:border-pine'
               }`}
             >
               <span className="block font-display font-bold">{t.label}</span>
@@ -175,6 +176,16 @@ export default function SellPage() {
                 ? '📍 Location set — tap to update'
                 : '📍 Use my current location'}
           </button>
+          <div className="mt-2">
+            <p className="mb-1 text-xs text-muted">or search an address or place</p>
+            <LocationSearch
+              onSelect={(p) => {
+                setCoords(p.coords);
+                setAddress(p.label);
+              }}
+              placeholder="e.g. Williamsburg, Brooklyn"
+            />
+          </div>
           {coords && (
             <p className="mt-2 flex items-center gap-1.5 text-xs text-pine">
               <span>✓</span>

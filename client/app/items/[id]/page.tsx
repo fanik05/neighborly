@@ -58,7 +58,7 @@ export default function ItemDetailPage() {
     <div className="grid gap-8 md:grid-cols-2">
       {/* Gallery */}
       <div>
-        <div className="aspect-square overflow-hidden rounded-tag border border-line bg-white">
+        <div className="aspect-square overflow-hidden rounded-tag border border-line bg-card">
           {cover ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={cover} alt={item.title} className="h-full w-full object-cover" />
@@ -100,14 +100,14 @@ export default function ItemDetailPage() {
 
         <p className="mt-4 whitespace-pre-wrap text-ink/90">{item.description || 'No description.'}</p>
 
-        <div className="mt-6 rounded-tag border border-line bg-white p-4">
+        <div className="mt-6 rounded-tag border border-line bg-card p-4">
           <p className="text-xs uppercase tracking-wide text-muted">Shared by</p>
           <p className="font-semibold">{item.owner?.name}</p>
           {item.owner?.neighborhood && <p className="text-sm text-muted">{item.owner.neighborhood}</p>}
         </div>
 
         {item.location?.coordinates && (
-          <div className="mt-4 rounded-tag border border-line bg-white p-4">
+          <div className="mt-4 rounded-tag border border-line bg-card p-4">
             <p className="text-xs uppercase tracking-wide text-muted">📍 Location</p>
             <p className="mt-0.5 font-semibold">
               {item.address || placeName || 'Looking up area…'}
