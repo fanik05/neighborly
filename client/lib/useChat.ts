@@ -60,6 +60,7 @@ export function useChat(conversationId: string | null) {
       socket.off('typing', onTyping);
       socket.off('message:read', onRead);
       socket.off('presence:update', onPresence);
+      if (typingTimeout.current) clearTimeout(typingTimeout.current);
       setMessages([]);
       setPeerTyping(false);
       setPeerReadAt(false);
