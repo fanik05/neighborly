@@ -20,6 +20,7 @@ export const loanStatusEnum = pgEnum('loan_status', [
   'pending',
   'approved',
   'declined',
+  'active',
   'returned',
 ]);
 

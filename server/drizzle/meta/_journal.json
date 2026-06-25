@@ -15,6 +15,13 @@
       "when": 1782048019291,
       "tag": "0001_dapper_viper",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782388080278,
+      "tag": "0002_wealthy_kinsey_walden",
+      "breakpoints": true
     }
   ]
 }
