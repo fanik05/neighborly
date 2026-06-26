@@ -122,3 +122,9 @@
     rgba(236, 226, 208, 0.035) 28px
   );
 }
+
+/* Location picker pin: show only the emoji, not Leaflet's default white box. */
+.leaflet-div-icon.location-pin {
+  background: transparent;
+  border: none;
+}

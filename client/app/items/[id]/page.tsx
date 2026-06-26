@@ -10,6 +10,9 @@ import { reverseGeocode } from '@/lib/geo';
 import type { Item } from '@/lib/types';
 import type { Conversation } from '@/lib/types';
 import LoanStatusPanel from '@/components/LoanStatusPanel';
+import dynamic from 'next/dynamic';
+
+const LocationMap = dynamic(() => import('@/components/LocationMap'), { ssr: false });
 
 const TYPE_LABEL: Record<Item['listingType'], string> = {
   sale: 'For sale',
@@ -31,6 +34,7 @@ export default function ItemDetailPage() {
   const [active, setActive] = useState(0);
   const [error, setError] = useState('');
   const [placeName, setPlaceName] = useState('');
+  const [mapOpen, setMapOpen] = useState(false);
 
   useEffect(() => {
     api<Item>(`/items/${id}`)
@@ -46,6 +50,13 @@ export default function ItemDetailPage() {
       .then(setPlaceName)
       .catch(() => setPlaceName(''));
   }, [item]);
+
+  useEffect(() => {
+    if (!mapOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMapOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mapOpen]);
 
   async function messageOwner() {
     try {
@@ -130,17 +141,54 @@ export default function ItemDetailPage() {
         {item.location?.coordinates && (
           <div className="mt-4 rounded-tag border border-line bg-card p-4">
             <p className="text-xs uppercase tracking-wide text-muted">📍 Location</p>
-            <p className="mt-0.5 font-semibold">
-              {item.address || placeName || 'Looking up area…'}
-            </p>
-            <a
-              href={`https://www.openstreetmap.org/?mlat=${item.location.coordinates[1]}&mlon=${item.location.coordinates[0]}#map=16/${item.location.coordinates[1]}/${item.location.coordinates[0]}`}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-1 inline-block text-sm font-semibold text-pine hover:text-pine-dark"
+            <p className="mt-0.5 font-semibold">{item.address || placeName || 'Looking up area…'}</p>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => setMapOpen(true)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setMapOpen(true);
+                }
+              }}
+              aria-label="Open larger map"
+              className="mt-2 block w-full cursor-pointer overflow-hidden rounded-tag border border-line"
             >
-              View on map ↗
-            </a>
+              <LocationMap coords={item.location.coordinates} className="h-40 w-full" zoomControl={false} />
+            </div>
+          </div>
+        )}
+
+        {mapOpen && item.location?.coordinates && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4"
+            onClick={() => setMapOpen(false)}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              className="w-full max-w-2xl overflow-hidden rounded-tag border border-line bg-card shadow-card"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-line px-4 py-2">
+                <p className="font-semibold">{item.address || placeName || 'Location'}</p>
+                <button type="button" onClick={() => setMapOpen(false)} aria-label="Close" className="text-muted hover:text-ink">
+                  ✕
+                </button>
+              </div>
+              <LocationMap coords={item.location.coordinates} className="h-[60vh] w-full" zoom={15} />
+              <div className="border-t border-line px-4 py-2 text-right">
+                <a
+                  href={`https://www.openstreetmap.org/?mlat=${item.location.coordinates[1]}&mlon=${item.location.coordinates[0]}#map=16/${item.location.coordinates[1]}/${item.location.coordinates[0]}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm font-semibold text-pine hover:text-pine-dark"
+                >
+                  View on OpenStreetMap ↗
+                </a>
+              </div>
+            </div>
           </div>
         )}
 

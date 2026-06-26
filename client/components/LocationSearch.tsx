@@ -20,8 +20,7 @@ export default function LocationSearch({
   const [results, setResults] = useState<PlaceResult[]>([]);
   const [status, setStatus] = useState<Status>('idle');
 
-  async function onSearch(e: React.FormEvent) {
-    e.preventDefault();
+  async function runSearch() {
     const q = query.trim();
     if (!q) return;
     setStatus('searching');
@@ -44,18 +43,31 @@ export default function LocationSearch({
 
   return (
     <div>
-      <form onSubmit={onSearch} className="flex gap-2">
+      {/* No <form> — this component is often rendered inside another form (e.g. the
+          Sell page), and nested forms are invalid HTML. Search on click / Enter. */}
+      <div className="flex gap-2">
         <input
           className="field"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              runSearch();
+            }
+          }}
           placeholder={placeholder}
           aria-label="Search for a place"
         />
-        <button type="submit" className="btn-ghost shrink-0" disabled={status === 'searching'}>
+        <button
+          type="button"
+          onClick={runSearch}
+          className="btn-ghost shrink-0"
+          disabled={status === 'searching'}
+        >
           {status === 'searching' ? 'Searching…' : 'Search'}
         </button>
-      </form>
+      </div>
 
       {status === 'results' && (
         <ul className="mt-2 overflow-hidden rounded-tag border border-line bg-card">
