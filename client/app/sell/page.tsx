@@ -95,8 +95,8 @@ export default function SellPage() {
   if (loading || !user) return <p className="py-16 text-center text-muted">Loading…</p>;
 
   return (
-    <div className="mx-auto max-w-xl">
-      <h1 className="text-3xl font-bold">List an item</h1>
+    <div className="animate-rise mx-auto max-w-xl">
+      <h1 className="text-3xl font-bold sm:text-4xl">List an item</h1>
       <p className="mt-1 text-muted">Share a tool or good with your street.</p>
 
       <form onSubmit={onSubmit} className="mt-6 space-y-5">

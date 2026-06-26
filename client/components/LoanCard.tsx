@@ -43,7 +43,7 @@ export default function LoanCard({ loan, role }: { loan: LoanRequest; role: 'bor
   }
 
   return (
-    <div className="flex items-center gap-3 rounded-tag border border-line bg-card p-3">
+    <div className="lift flex items-center gap-3 rounded-tag border border-line bg-card p-3 shadow-card">
       <div className="h-12 w-12 shrink-0 overflow-hidden rounded-tag border border-line bg-paper">
         {loan.item.cover ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -57,9 +57,7 @@ export default function LoanCard({ loan, role }: { loan: LoanRequest; role: 'bor
         <p className="truncate text-xs text-muted">
           {role === 'lending' ? 'Requested by' : 'From'} {other.name} · {fmt(loan.startDate)} → {fmt(loan.dueDate)}
         </p>
-        <span className={`font-mono text-[0.7rem] font-semibold uppercase tracking-wider ${STAMP[loan.status]}`}>
-          {loan.status}
-        </span>
+        <span className={`stamp ${STAMP[loan.status]}`}>{loan.status}</span>
       </div>
       {actions.length > 0 && (
         <div className="flex shrink-0 gap-2">

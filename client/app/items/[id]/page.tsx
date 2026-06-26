@@ -89,8 +89,8 @@ export default function ItemDetailPage() {
   return (
     <div className="grid gap-8 md:grid-cols-2">
       {/* Gallery */}
-      <div>
-        <div className="aspect-square overflow-hidden rounded-tag border border-line bg-card">
+      <div className="animate-rise">
+        <div className="aspect-square overflow-hidden rounded-tag border border-line bg-card shadow-card">
           {cover ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={cover} alt={item.title} className="h-full w-full object-cover" />
@@ -117,15 +117,15 @@ export default function ItemDetailPage() {
       </div>
 
       {/* Details */}
-      <div>
+      <div className="animate-rise" style={{ animationDelay: '110ms' }}>
         <div className="flex items-center gap-2">
-          <span className="tag-tab bg-pine/15 text-pine">{TYPE_LABEL[item.listingType]}</span>
+          <span className="stamp text-pine">{TYPE_LABEL[item.listingType]}</span>
           {item.status !== 'available' && (
-            <span className="tag-tab bg-ink/10 text-ink capitalize">{item.status}</span>
+            <span className="stamp capitalize text-marigold-dark">{item.status}</span>
           )}
         </div>
 
-        <h1 className="mt-3 text-3xl font-bold">{item.title}</h1>
+        <h1 className="mt-3 text-3xl font-bold sm:text-4xl">{item.title}</h1>
         {item.listingType === 'sale' && item.price > 0 && (
           <p className="mt-1 font-display text-2xl font-bold text-pine">${item.price}</p>
         )}
