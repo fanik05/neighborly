@@ -1,25 +1,26 @@
 import type { Metadata } from 'next';
-import { Archivo, Public_Sans, DM_Mono } from 'next/font/google';
+import { Space_Grotesk, Hanken_Grotesk, Space_Mono } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth';
 import { ConversationsProvider } from '@/lib/useConversations';
 import { LoansProvider } from '@/lib/useLoans';
 import Navbar from '@/components/Navbar';
 
-// "The Lending Desk" type system:
-// — Archivo (heavy + wide tracking): official catalog-header display
-// — Public Sans: civic, readable body
-// — DM Mono: the signature face for stamped hyperlocal data (distance, status)
-const display = Archivo({
+// "Neighborhood Wayfinding" type system:
+// — Space Grotesk: geometric wayfinding-style display
+// — Hanken Grotesk: warm, highly legible body
+// — Space Mono: hyperlocal data (price, distance, status) like map coordinates/signage
+const display = Space_Grotesk({
   subsets: ['latin'],
-  variable: '--font-archivo',
+  weight: ['500', '600', '700'],
+  variable: '--font-grotesk',
   display: 'swap',
 });
-const body = Public_Sans({ subsets: ['latin'], variable: '--font-public', display: 'swap' });
-const mono = DM_Mono({
+const body = Hanken_Grotesk({ subsets: ['latin'], variable: '--font-hanken', display: 'swap' });
+const mono = Space_Mono({
   subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-dmmono',
+  weight: ['400', '700'],
+  variable: '--font-spacemono',
   display: 'swap',
 });
 
@@ -32,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable}`}
+      className={`${display.variable} ${body.variable} ${mono.variable} antialiased`}
       suppressHydrationWarning
     >
       <head>

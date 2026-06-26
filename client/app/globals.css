@@ -1,130 +1,237 @@
 @import 'tailwindcss';
 @import 'leaflet/dist/leaflet.css';
 
-/* Tailwind v4 CSS-first theme — "The Lending Desk".
-   A tool-lending library: manila cardstock, catalog-blue structure, and a
-   rubber-stamp red that carries every piece of hyperlocal data.
-   Generates utilities like bg-paper, text-pine, text-stamp, rounded-tag, shadow-card. */
+/* Tailwind v4 CSS-first theme — "Neighborhood Wayfinding".
+   The app as a friendly, living map of your block: a bright canvas, civic cobalt,
+   and coral / sun / leaf signal accents. Token NAMES are kept stable so every
+   component re-skins at once; the values are the new palette. */
 @theme {
-  --color-paper: #e7e0cf; /* manila desk surface */
-  --color-card: #f3eddf; /* lighter checkout-card stock */
-  --color-ink: #23201a; /* stamped ink */
+  --color-paper: #f6f5ef; /* bright warm canvas */
+  --color-card: #ffffff; /* clean white surfaces */
+  --color-ink: #15171e; /* near-black, cool */
 
-  /* "pine" = the catalog-blue brand (kept under the legacy name so existing
-     utilities across login/register/forms stay cohesive without edits). */
-  --color-pine: #27445c;
-  --color-pine-dark: #1d3344;
-  --color-pine-light: #3a6076;
+  /* "pine" = the civic cobalt brand (kept under the legacy name) */
+  --color-pine: #2f5fe0;
+  --color-pine-dark: #1e45b0;
+  --color-pine-light: #5b82ea;
 
-  /* "marigold" = rubber-stamp red, the signature accent. */
-  --color-marigold: #b23a2e;
-  --color-marigold-dark: #8f2d24;
-  --color-stamp: #b23a2e; /* explicit name for the stamp signature */
+  /* "marigold" = signal coral, the primary pop / CTA accent */
+  --color-marigold: #ff6a5b;
+  --color-marigold-dark: #e8513f;
 
-  --color-available: #3e7a3b; /* checkout green — "available" */
-  --color-muted: #6b6557; /* graphite captions */
-  --color-line: #cdc2a8; /* manila hairline */
-  --color-onaccent: #f3eddf; /* text on colored buttons/badges (theme-aware) */
+  --color-sun: #ffc53d; /* warm signal yellow — highlights / "free" */
+  --color-leaf: #1fb486; /* fresh green — available / loan / success */
+  --color-stamp: #ff6a5b; /* legacy alias used on cards/hero → coral */
+  --color-available: #1fb486;
+
+  --color-muted: #6b7080; /* slate captions */
+  --color-line: #e6e3d8; /* soft hairline */
+  --color-onaccent: #ffffff; /* text on cobalt / coral */
 
   /* next/font exposes these on <html> (see layout.tsx) */
-  --font-display: var(--font-archivo), system-ui, sans-serif;
-  --font-sans: var(--font-public), system-ui, sans-serif;
-  --font-mono: var(--font-dmmono), ui-monospace, 'SFMono-Regular', monospace;
+  --font-display: var(--font-grotesk), system-ui, sans-serif;
+  --font-sans: var(--font-hanken), system-ui, sans-serif;
+  --font-mono: var(--font-spacemono), ui-monospace, 'SFMono-Regular', monospace;
 
-  --radius-tag: 5px; /* cardstock corners, not pills */
-  --shadow-card: 0 1px 0 #cdc2a8, 0 12px 26px -20px rgba(35, 32, 26, 0.5);
+  --radius-tag: 14px; /* friendlier rounded surfaces */
+  --shadow-card: 0 1px 2px rgba(21, 23, 30, 0.04), 0 12px 28px -16px rgba(47, 95, 224, 0.28);
+
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @layer base {
   body {
-    @apply bg-paper text-ink antialiased;
-    /* faint ledger ruling — the catalog desk */
-    background-image: repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent 27px,
-      rgba(39, 68, 92, 0.05) 27px,
-      rgba(39, 68, 92, 0.05) 28px
-    );
+    @apply bg-paper text-ink;
+    font-family: var(--font-sans);
+    /* faint wayfinding dot-grid — a subtle map grain */
+    background-image: radial-gradient(rgba(47, 95, 224, 0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
   }
   h1,
   h2,
   h3 {
-    @apply font-display font-extrabold tracking-tight;
+    @apply font-display font-bold tracking-tight;
+  }
+  /* smooth the light↔dark swap */
+  body {
+    transition: background-color 0.35s ease, color 0.35s ease;
   }
 }
 
 @layer components {
-  /* Buttons — squared cardstock, firm press */
   .btn,
   .btn-primary,
   .btn-accent,
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-tag px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-tag px-4 py-2.5 text-sm font-semibold;
+    transition:
+      transform 0.12s var(--ease-out-back),
+      background-color 0.18s ease,
+      box-shadow 0.18s ease,
+      border-color 0.18s ease;
   }
   .btn-primary {
-    @apply bg-pine text-onaccent hover:bg-pine-dark;
+    @apply bg-pine text-onaccent;
+    box-shadow: 0 6px 16px -8px rgba(47, 95, 224, 0.6);
+  }
+  .btn-primary:hover {
+    @apply bg-pine-dark;
+    transform: translateY(-1px);
   }
   .btn-accent {
-    @apply bg-marigold text-onaccent hover:bg-marigold-dark;
+    @apply bg-marigold text-onaccent;
+    box-shadow: 0 6px 16px -8px rgba(255, 106, 91, 0.6);
+  }
+  .btn-accent:hover {
+    @apply bg-marigold-dark;
+    transform: translateY(-1px);
   }
   .btn-ghost {
-    @apply border border-line bg-card text-ink hover:border-pine;
+    @apply border border-line bg-card text-ink;
   }
+  .btn-ghost:hover {
+    @apply border-pine text-pine;
+  }
+  .btn:active,
+  .btn-primary:active,
+  .btn-accent:active,
+  .btn-ghost:active {
+    transform: translateY(0) scale(0.98);
+  }
+  .btn:disabled,
+  .btn-primary:disabled,
+  .btn-accent:disabled,
+  .btn-ghost:disabled {
+    @apply opacity-50;
+    transform: none;
+    cursor: not-allowed;
+  }
+
   .field {
-    @apply w-full rounded-tag border border-line bg-card px-3.5 py-2.5 text-sm outline-none focus:border-pine focus:ring-2 focus:ring-pine/15;
+    @apply w-full rounded-tag border border-line bg-card px-3.5 py-2.5 text-sm outline-none;
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+  .field:focus {
+    @apply border-pine;
+    box-shadow: 0 0 0 3px rgba(47, 95, 224, 0.15);
   }
   .label {
     @apply mb-1.5 block font-mono text-xs font-medium uppercase tracking-wider text-muted;
   }
 
-  /* Mono catalog label — listing type, dates, plain data */
+  /* mono data label — listing type, plain metadata */
   .tag-tab {
     @apply inline-flex items-center gap-1 font-mono text-[0.7rem] font-medium uppercase tracking-wider;
   }
 
-  /* The signature: a rubber-stamp impression. Color set by the caller
-     (text-stamp / text-pine / text-available); border inherits currentColor. */
+  /* signal pill — hyperlocal data (distance, status) as a clean map-label chip.
+     Color set by the caller (text-stamp / text-pine / text-leaf). */
   .stamp {
-    @apply inline-flex items-center gap-1 rounded-[3px] border-2 px-1.5 py-0.5 font-mono text-[0.68rem] font-semibold uppercase tracking-wider;
+    @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[0.66rem] font-bold uppercase tracking-wider;
     border-color: currentColor;
-    transform: rotate(-2.5deg);
+  }
+
+  /* card lift on hover */
+  .lift {
+    transition:
+      transform 0.18s var(--ease-out-back),
+      box-shadow 0.18s ease;
+  }
+  .lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 1px 2px rgba(21, 23, 30, 0.05), 0 22px 40px -22px rgba(47, 95, 224, 0.4);
   }
 }
 
-/* "After hours" — the lending desk at night. Reinterprets the same world in
-   dark walnut + graphite; manila cards dim under a worklamp, stamps brighten.
-   Activated by `.dark` on <html> (see layout.tsx + ThemeToggle). Overriding the
-   color vars re-resolves every utility — no per-component dark: variants. */
+/* ---------- Motion ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pin-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-22px);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(3px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes route-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-44px, -26px, 0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.6s var(--ease-out-back) both;
+}
+.animate-pin {
+  animation: pin-drop 0.6s var(--ease-out-back) both;
+}
+
+/* scroll-reveal: starts hidden, .in (set by <Reveal>) plays the rise */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.reveal.in {
+  animation: rise 0.55s var(--ease-out-back) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- "After dark" — the block at night ---------- */
 .dark {
-  --color-paper: #1a1714; /* dark walnut desk */
-  --color-card: #262019; /* manila card, dimmed */
-  --color-ink: #ece2d0; /* warm paper-white text */
-  --color-onaccent: #1a1714; /* dark text on the brightened accents */
-  --color-pine: #7fb0d4; /* catalog blue, lifted for dark */
-  --color-pine-dark: #98c2e0;
-  --color-pine-light: #6c9fc4;
-  --color-marigold: #e07a5f; /* stamp red, lifted */
-  --color-marigold-dark: #ee8d73;
-  --color-stamp: #e07a5f;
-  --color-available: #6bbf67;
-  --color-muted: #9a9384; /* graphite, lightened for dark */
-  --color-line: #3a332b; /* dark hairline */
-  --shadow-card: 0 1px 0 #2c2620, 0 14px 30px -22px rgba(0, 0, 0, 0.7);
+  --color-paper: #11131a; /* deep blue-black */
+  --color-card: #1a1d26; /* lifted panel */
+  --color-ink: #eef0f6; /* cool paper-white */
+  --color-pine: #6f96ff; /* brightened cobalt */
+  --color-pine-dark: #87a8ff;
+  --color-pine-light: #5b82ea;
+  --color-marigold: #ff7d6f; /* brightened coral */
+  --color-marigold-dark: #ff9486;
+  --color-sun: #ffd166;
+  --color-leaf: #34d39b;
+  --color-stamp: #ff7d6f;
+  --color-available: #34d39b;
+  --color-muted: #9aa0b2;
+  --color-line: #2c3040;
+  --color-onaccent: #11131a; /* dark text on the brightened accents */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 34px -20px rgba(0, 0, 0, 0.75);
 }
-
 .dark body {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 27px,
-    rgba(236, 226, 208, 0.035) 27px,
-    rgba(236, 226, 208, 0.035) 28px
-  );
-}
-
-/* Location picker pin: show only the emoji, not Leaflet's default white box. */
-.leaflet-div-icon.location-pin {
-  background: transparent;
-  border: none;
+  background-image: radial-gradient(rgba(111, 150, 255, 0.06) 1px, transparent 1px);
 }
