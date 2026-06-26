@@ -30,7 +30,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm">
+    <div className="animate-rise mx-auto max-w-sm">
+      <div className="rounded-tag border border-line bg-card p-6 shadow-card sm:p-8">
       <h1 className="text-3xl font-bold">Join your neighborhood</h1>
       <p className="mt-1 text-muted">Borrow a drill, sell a bike, lend a hand.</p>
 
@@ -65,6 +66,7 @@ export default function RegisterPage() {
           Sign in
         </Link>
       </p>
+      </div>
     </div>
   );
 }
