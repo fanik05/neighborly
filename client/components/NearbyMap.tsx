@@ -34,7 +34,7 @@ export default function NearbyMap({
           <CircleMarker
             center={[coords[1], coords[0]]}
             radius={8}
-            pathOptions={{ color: '#27445c', weight: 3 }}
+            pathOptions={{ color: '#2f5fe0', weight: 3 }}
           >
             <Popup>You are here</Popup>
           </CircleMarker>
@@ -45,7 +45,7 @@ export default function NearbyMap({
             key={item.id}
             center={[item.location.coordinates[1], item.location.coordinates[0]]}
             radius={7}
-            pathOptions={{ color: '#b23a2e', weight: 2 }}
+            pathOptions={{ color: '#ff6a5b', weight: 2 }}
           >
             <Popup>
               <div className="space-y-1">

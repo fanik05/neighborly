@@ -39,10 +39,10 @@ export default function FilterBar({
           <button
             key={f.key}
             onClick={() => onFilter(f.key)}
-            className={`rounded-tag border px-3 py-1.5 font-mono text-xs font-medium uppercase tracking-wider transition-colors ${
+            className={`rounded-full border px-3.5 py-1.5 font-mono text-xs font-medium uppercase tracking-wider transition-all ${
               filter === f.key
-                ? 'border-pine bg-pine text-onaccent'
-                : 'border-line bg-card text-muted hover:border-pine'
+                ? 'border-pine bg-pine text-onaccent shadow-[0_6px_14px_-8px_rgba(47,95,224,0.7)]'
+                : 'border-line bg-card text-muted hover:-translate-y-px hover:border-pine hover:text-pine'
             }`}
           >
             {f.label}
@@ -52,7 +52,7 @@ export default function FilterBar({
       <div className="flex items-center gap-2">
         {showRadius && (
           <select
-            className="w-auto rounded-tag border border-line bg-card px-3 py-1.5 font-mono text-xs outline-none focus:border-pine focus:ring-2 focus:ring-pine/15"
+            className="w-auto rounded-full border border-line bg-card px-3 py-1.5 font-mono text-xs outline-none focus:border-pine focus:ring-2 focus:ring-pine/15"
             aria-label="Nearby radius"
             value={radius}
             onChange={(e) => onRadius(Number(e.target.value))}

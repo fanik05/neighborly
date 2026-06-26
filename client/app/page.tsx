@@ -9,6 +9,7 @@ import type { ListingType } from '@/lib/types';
 import ItemCard from '@/components/ItemCard';
 import FilterBar from '@/components/FilterBar';
 import LocationSearch from '@/components/LocationSearch';
+import Reveal from '@/components/Reveal';
 
 const NearbyMap = dynamic(() => import('@/components/NearbyMap'), { ssr: false });
 
@@ -34,32 +35,67 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Hero — the lending desk: what can I check out from my street right now? */}
-      <section className="relative mb-8 overflow-hidden rounded-tag border border-line bg-card p-6 shadow-card sm:p-10">
-        {/* corner rubber stamp — the signature */}
-        <span className="pointer-events-none absolute right-4 top-4 hidden rotate-[7deg] items-center rounded-[3px] border-2 border-stamp px-2 py-1 font-mono text-[0.7rem] font-semibold uppercase tracking-wider text-stamp sm:inline-flex">
-          Lend · Borrow · Trade
-        </span>
+      {/* Hero — a living map of your block */}
+      <section className="relative mb-10 overflow-hidden rounded-tag border border-line bg-card p-6 shadow-card sm:p-12">
+        {/* ambient wayfinding backdrop: drifting map grid + a self-drawing route to a pin */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            className="absolute -inset-10"
+            style={{
+              backgroundImage: 'radial-gradient(var(--color-pine) 1.4px, transparent 1.4px)',
+              backgroundSize: '26px 26px',
+              opacity: 0.1,
+              animation: 'drift 22s linear infinite alternate',
+            }}
+          />
+          <svg
+            className="absolute right-0 top-0 hidden h-full w-2/3 lg:block"
+            viewBox="0 0 420 320"
+            fill="none"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <path
+              d="M10 280 C 130 280, 120 110, 250 110 S 400 80, 414 70"
+              stroke="var(--color-pine)"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeDasharray="720"
+              strokeDashoffset="720"
+              style={{ animation: 'route-draw 2.2s var(--ease-out-back) 0.5s forwards', opacity: 0.5 }}
+            />
+            <circle cx="10" cy="280" r="6" fill="var(--color-pine)" opacity="0.6" />
+          </svg>
+          <span
+            className="animate-pin absolute right-[14%] top-[16%] hidden text-4xl lg:block"
+            style={{ animationDelay: '2.5s' }}
+          >
+            📍
+          </span>
+        </div>
 
-        <p className="tag-tab text-pine">The lending desk · {coords ? 'near you' : 'your neighborhood'}</p>
-        <h1 className="mt-3 max-w-2xl text-4xl leading-none sm:text-6xl">
-          Borrow the drill.
-          <br />
-          Sell the bike.
-          <br />
-          Lend a hand.
-        </h1>
-        <p className="mt-4 max-w-xl text-muted">
-          Neighborly is the shared shed for your street — check out tools and goods a short walk
-          away.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-2">
-          <Link href="/sell" className="btn-accent">
-            List an item
-          </Link>
-          <a href="#feed" className="btn-ghost">
-            Browse the catalog
-          </a>
+        <div className="relative">
+          <p className="animate-rise tag-tab text-pine" style={{ animationDelay: '40ms' }}>
+            ◍ {coords ? 'Near you' : 'Your neighborhood'}
+          </p>
+          <h1
+            className="animate-rise mt-3 max-w-2xl text-4xl leading-[1.05] sm:text-6xl"
+            style={{ animationDelay: '120ms' }}
+          >
+            Everything on your <span className="text-pine">block</span>,
+            <br className="hidden sm:block" /> a short walk away.
+          </h1>
+          <p className="animate-rise mt-4 max-w-xl text-muted" style={{ animationDelay: '200ms' }}>
+            Borrow the drill, sell the bike, lend a hand — Neighborly maps what the people on your
+            street are sharing right now.
+          </p>
+          <div className="animate-rise mt-7 flex flex-wrap gap-3" style={{ animationDelay: '280ms' }}>
+            <Link href="/sell" className="btn-accent">
+              List an item
+            </Link>
+            <a href="#feed" className="btn-ghost">
+              Browse nearby
+            </a>
+          </div>
         </div>
       </section>
 
@@ -105,16 +141,17 @@ export default function HomePage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {items.map((item) => (
-            <ItemCard
-              key={item.id}
-              item={item}
-              distance={
-                coords && item.location?.coordinates
-                  ? formatDistance(distanceMiles(coords, item.location.coordinates))
-                  : undefined
-              }
-            />
+          {items.map((item, i) => (
+            <Reveal key={item.id} delay={Math.min(i, 8) * 60}>
+              <ItemCard
+                item={item}
+                distance={
+                  coords && item.location?.coordinates
+                    ? formatDistance(distanceMiles(coords, item.location.coordinates))
+                    : undefined
+                }
+              />
+            </Reveal>
           ))}
         </div>
       )}
